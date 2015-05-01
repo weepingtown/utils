@@ -1,7 +1,6 @@
 // avl.cpp : 定义控制台应用程序的入口点。
 //
-
-#include "stdafx.h"
+#include "pch.h"
 #include "avl.h"
 
 void *avl_get_key(avl_root_t *root, avl_node_t *node)
@@ -11,9 +10,9 @@ void *avl_get_key(avl_root_t *root, avl_node_t *node)
 
 avl_node_t *_avl_find(avl_root_t *root, avl_node_t *node, void *key)
 {
-    void *node_key = NULL;
+    void *node_key = AVL_NULL;
     int cmp = 0;
-    if (node == NULL) return NULL;
+    if (node == AVL_NULL) return AVL_NULL;
     node_key = avl_get_key(root, node);
     cmp = root->compare(key, node_key);
     if (cmp == -1)
@@ -26,12 +25,12 @@ avl_node_t *_avl_find(avl_root_t *root, avl_node_t *node, void *key)
 
 void *avl_find(avl_root_t *root, void *key)
 {
-    avl_node_t *node = NULL;
-    if (root == NULL)
-        return NULL;
+    avl_node_t *node = AVL_NULL;
+    if (root == AVL_NULL)
+        return AVL_NULL;
     node = _avl_find(root, root->node, key);
-    if (node == NULL)
-        return NULL;
+    if (node == AVL_NULL)
+        return AVL_NULL;
 
     return (void *)((char *)node - root->node_offsite);
 }
@@ -48,7 +47,7 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
 {
     avl_node_t *current = node;
     avl_node_t *parent = node->parent;
-    if (current->left == NULL && current->right == NULL)
+    if (current->left == AVL_NULL && current->right == AVL_NULL)
     {
         if (parent->left == node)
         {
@@ -67,7 +66,7 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
             }
         }
     }
-    else if (current->right == NULL)
+    else if (current->right == AVL_NULL)
     {
         if (parent)
         {
@@ -80,7 +79,7 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
         current = current->right;
         while (current)
         {
-            if (current->left == NULL)
+            if (current->left == AVL_NULL)
             {
                 return (void *)((char *)current - root->node_offsite);
             }
@@ -88,12 +87,12 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
             current = current->left;
         }
     }
-    return NULL;
+    return AVL_NULL;
 }
 
 void *avl_find_or_next(avl_root_t *root, void *key)
 {
-    return NULL;
+    return AVL_NULL;
 }
 int avl_height(avl_node_t *root)
 {
@@ -150,7 +149,7 @@ avl_node_t *avl_rotate_left(avl_node_t *root)
 
 avl_root_t *avl_init_tree(avl_root_t *root, int key_offsite, int node_offsite, avl_compare compare)
 {
-    root->node = NULL;
+    root->node = AVL_NULL;
     root->compare = compare;
     root->key_offsite = key_offsite;
     root->node_offsite = node_offsite;
@@ -160,10 +159,10 @@ avl_root_t *avl_init_tree(avl_root_t *root, int key_offsite, int node_offsite, a
 
 void avl_init_node(avl_node_t *node)
 {
-    node->parent = NULL;
+    node->parent = AVL_NULL;
     node->height = 1;
-    node->left = NULL;
-    node->right = NULL;
+    node->left = AVL_NULL;
+    node->right = AVL_NULL;
     return;
 }
 
@@ -201,15 +200,15 @@ avl_node_t *avl_balance(avl_node_t *root)
 avl_node_t *avl_insert(avl_root_t *root, avl_node_t *node)
 {
     avl_node_t *current = root->node;
-    void *node_key = NULL;
-    void *current_key = NULL;
+    void *node_key = AVL_NULL;
+    void *current_key = AVL_NULL;
     int cmp = 0;
 
-    if (current == NULL)
+    if (current == AVL_NULL)
     {
-        node->parent = NULL;
+        node->parent = AVL_NULL;
         root->node = node;
-        return NULL;
+        return AVL_NULL;
     }
 
     node_key = avl_get_key(root, node);
@@ -255,33 +254,33 @@ avl_node_t *avl_insert(avl_root_t *root, avl_node_t *node)
         current = avl_balance(current);
     } while (current->parent);
     root->node = current;
-    return NULL;
+    return AVL_NULL;
 }
 
 
 void avl_remove(avl_root_t *root, avl_node_t *node)
 {
     avl_node_t *parent = node->parent;
-    avl_node_t *tmp, *current = node;
+    avl_node_t *tmp = AVL_NULL, *current = node;
     int cmp = 0;
 
-    if (node->parent == NULL && node->left == NULL && node->right == NULL)
+    if (node->parent == AVL_NULL && node->left == AVL_NULL && node->right == AVL_NULL)
     {
         return;
     }
 
-    if (node->left == NULL && node->right == NULL)
+    if (node->left == AVL_NULL && node->right == AVL_NULL)
     {
         if (parent->left == node)
         {
-            parent->left = NULL;
+            parent->left = AVL_NULL;
         }
         else if (parent->right == node)
         {
-            parent->right = NULL;
+            parent->right = AVL_NULL;
         }
     }
-    else if (node->right == NULL)
+    else if (node->right == AVL_NULL)
     {
         if (parent->left == node)
         {
@@ -292,7 +291,7 @@ void avl_remove(avl_root_t *root, avl_node_t *node)
             parent->right = node->left;
         }
     }
-    else if (node->left == NULL)
+    else if (node->left == AVL_NULL)
     {
         if (parent->left == node)
         {

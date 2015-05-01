@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+#define AVL_NULL 0
 
 typedef struct avl_node_s
 {
