@@ -1,7 +1,12 @@
 // avl.cpp : 定义控制台应用程序的入口点。
 //
-#include "pch.h"
 #include "avl.h"
+
+
+int avl_max(int a, int b)
+{
+  return (a > b) ? a : b;
+}
 
 void *avl_get_key(avl_root_t *root, avl_node_t *node)
 {
@@ -102,7 +107,7 @@ int avl_height(avl_node_t *root)
 
 void avl_adjust_height(avl_node_t *root)
 {
-    root->height = 1 + max(avl_height(root->left), avl_height(root->right));
+    root->height = 1 + avl_max(avl_height(root->left), avl_height(root->right));
 }
 
 
