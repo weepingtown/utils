@@ -258,8 +258,10 @@ avl_node_t *avl_insert(avl_root_t *root, avl_node_t *node)
 
 void avl_remove(avl_root_t *root, avl_node_t *node)
 {
-    avl_node_t *parent = node->parent;
-    avl_node_t *tmp = parent, *current = node;
+    avl_node_t *node_parent = node->parent;
+    avl_node_t *current = node;
+    avl_node_t *current_parent = node_parent;
+    avl_node_t *balance = AVL_NULL;
     int cmp = 0;
 
     /* make sure this node is in tree, or return */
@@ -268,75 +270,71 @@ void avl_remove(avl_root_t *root, avl_node_t *node)
         return;
     }
 
-    if (node->left == AVL_NULL && node->right == AVL_NULL)
-    {
-        if (parent->left == node)
-        {
-            parent->left = AVL_NULL;
-        }
-        else if (parent->right == node)
-        {
-            parent->right = AVL_NULL;
-        }
-    }
-    else if (node->right == AVL_NULL)
-    {
-        if (parent->left == node)
-        {
-            parent->left = node->left;
-        }
-        else if (parent->right == node)
-        {
-            parent->right = node->left;
-        }
-    }
-    else if (node->left == AVL_NULL)
-    {
-        if (parent->left == node)
-        {
-            parent->left = node->right;
-        }
-        else if (parent->right == node)
-        {
-            parent->right = node->right;
-        }
-    }
-    else
+    if (node->right)
     {
         current = node->right;
         while (current->left)
         {
             current = current->left;
         }
-        tmp = current->parent;
-        current->parent->left = current->right;
 
-        if (parent->left == node)
+        if (current->parent != node)
         {
-            parent->left = current;
+            current->parent->left = current->right;
+            balance = current->parent;
         }
-        else if (parent->right == node)
+        else
         {
-            parent->right = current;
+            balance = current;
         }
 
+        current->parent = node_parent;
         current->left = node->left;
         current->right = node->right;
-        current->parent = node->parent;
-        if (node->left) 
-            node->left->parent = current;
+        if (node_parent->left == node)
+        {
+            node_parent->left = current;
+        }
+        else if (node_parent->right == node)
+        {
+            node_parent->right = current;
+        }
 
-        if (node->right)
+        if (node->left && node->left != current)
+        {
+            node->left->parent = current;
+        }
+            
+        if (node->right && node->right != current)
+        {
             node->right->parent = current;
+        }
     }
-    
-    do 
+    else
     {
-        
-        avl_adjust_height(tmp);
-        current = avl_balance(current);
-        tmp = tmp->parent;
-    } while (tmp->parent);
-   root->node = tmp;
+        current = node->left;
+        if (current)
+        {
+            current->parent = node->parent;
+        }
+
+        if (node_parent->left == node)
+        {
+            node_parent->left = current;
+        }
+        else if (node_parent->right == node)
+        {
+            node_parent->right = current;
+        }
+        balance = node_parent;
+    }
+
+    do
+    {
+        avl_adjust_height(balance);
+        balance = avl_balance(balance);
+        balance = balance->parent;
+    } while (balance->parent);
+    root->node = balance;
     return;
 }
