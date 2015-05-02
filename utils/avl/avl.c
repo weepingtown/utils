@@ -54,21 +54,14 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
     avl_node_t *parent = node->parent;
     if (current->left == AVL_NULL && current->right == AVL_NULL)
     {
-        if (parent->left == node)
+        while (parent)
         {
-            return (void *)((char *)parent - root->node_offsite);
-        }
-        else if (parent->right == node)
-        {
-            while (parent)
+            if (parent->left == current)
             {
-                if (parent->left == current)
-                {
-                    return (void *)((char *)parent - root->node_offsite);
-                }
-                current = parent;
-                parent = current->parent;
+                return (void *)((char *)parent - root->node_offsite);
             }
+            current = parent;
+            parent = current->parent;
         }
     }
     else if (current->right == AVL_NULL)
@@ -266,9 +259,10 @@ avl_node_t *avl_insert(avl_root_t *root, avl_node_t *node)
 void avl_remove(avl_root_t *root, avl_node_t *node)
 {
     avl_node_t *parent = node->parent;
-    avl_node_t *tmp = AVL_NULL, *current = node;
+    avl_node_t *tmp = parent, *current = node;
     int cmp = 0;
 
+    /* make sure this node is in tree, or return */
     if (node->parent == AVL_NULL && node->left == AVL_NULL && node->right == AVL_NULL)
     {
         return;
@@ -329,15 +323,20 @@ void avl_remove(avl_root_t *root, avl_node_t *node)
         current->left = node->left;
         current->right = node->right;
         current->parent = node->parent;
+        if (node->left) 
+            node->left->parent = current;
+
+        if (node->right)
+            node->right->parent = current;
     }
     
     do 
     {
         
         avl_adjust_height(tmp);
-        //current = avl_balance(current);
+        current = avl_balance(current);
         tmp = tmp->parent;
     } while (tmp->parent);
-    root->node = tmp;
+   root->node = tmp;
     return;
 }
