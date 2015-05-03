@@ -1,5 +1,4 @@
-// avl.cpp : 定义控制台应用程序的入口点。
-//
+
 #include "avl.h"
 
 
@@ -40,15 +39,22 @@ void *avl_find(avl_root_t *root, void *key)
     return (void *)((char *)node - root->node_offsite);
 }
 
-void *avl_first(avl_root_t *root)
+avl_node_t *_avl_first(avl_node_t *root)
 {
-    avl_node_t *current = root->node;
+    avl_node_t *current = root;
     while (current->left)
         current = current->left;
-    return (void *)((char *)current - root->node_offsite);
+    return current;
 }
 
-void *avl_next(avl_root_t *root, avl_node_t *node)
+void *avl_first(avl_root_t *root)
+{
+    avl_node_t *current = _avl_first(root);
+
+    return current ? (void *)((char *)current - root->node_offsite) : AVL_NULL;
+}
+
+avl_node_t *_avl_next(avl_node_t *node)
 {
     avl_node_t *current = node;
     avl_node_t *parent = node->parent;
@@ -58,7 +64,7 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
         {
             if (parent->left == current)
             {
-                return (void *)((char *)parent - root->node_offsite);
+                return (void *)parent;
             }
             current = parent;
             parent = current->parent;
@@ -68,7 +74,7 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
     {
         if (parent)
         {
-            return (void *)((char *)parent - root->node_offsite);
+            return (void *)parent;
         }
     }
     else
@@ -79,7 +85,7 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
         {
             if (current->left == AVL_NULL)
             {
-                return (void *)((char *)current - root->node_offsite);
+                return (void *)current;
             }
             parent = current;
             current = current->left;
@@ -87,10 +93,29 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
     }
     return AVL_NULL;
 }
+void *avl_next(avl_root_t *root, avl_node_t *node)
+{
+    avl_node_t *current = _avl_next(node);
+    return current ? (void *)((char *)current - root->node_offsite) : AVL_NULL;
+}
 
 void *avl_find_or_next(avl_root_t *root, void *key)
 {
-    return AVL_NULL;
+    avl_node_t *node = AVL_NULL;
+    avl_node_t *prev = AVL_NULL;
+    void *node_key = AVL_NULL;
+    int cmp = 0;
+
+    for (node = _avl_first(root->node); node; node = _avl_next(node))
+    {
+        node_key = avl_get_key(root, node);
+        cmp = root->compare(key, node_key);
+        if (cmp != 1)
+        {
+            break;
+        }
+    }
+    return (void *)((char *)node - root->node_offsite);
 }
 int avl_height(avl_node_t *root)
 {
@@ -262,6 +287,7 @@ void avl_remove(avl_root_t *root, avl_node_t *node)
     avl_node_t *current = node;
     avl_node_t *rebalance = AVL_NULL;
 
+    if (node == AVL_NULL)
     {
         return;
     }
