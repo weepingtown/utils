@@ -260,12 +260,8 @@ void avl_remove(avl_root_t *root, avl_node_t *node)
 {
     avl_node_t *node_parent = node->parent;
     avl_node_t *current = node;
-    avl_node_t *current_parent = node_parent;
-    avl_node_t *balance = AVL_NULL;
-    int cmp = 0;
+    avl_node_t *rebalance = AVL_NULL;
 
-    /* make sure this node is in tree, or return */
-    if (node->parent == AVL_NULL && node->left == AVL_NULL && node->right == AVL_NULL)
     {
         return;
     }
@@ -277,27 +273,30 @@ void avl_remove(avl_root_t *root, avl_node_t *node)
         {
             current = current->left;
         }
+        rebalance = current->parent;
 
         if (current->parent != node)
         {
             current->parent->left = current->right;
-            balance = current->parent;
+            current->left = node->left;
+            current->right = node->right;
         }
         else
         {
-            balance = current;
+            current->left = node->left;
         }
 
         current->parent = node_parent;
-        current->left = node->left;
-        current->right = node->right;
-        if (node_parent->left == node)
+        if (node_parent)
         {
-            node_parent->left = current;
-        }
-        else if (node_parent->right == node)
-        {
-            node_parent->right = current;
+            if (node_parent->left == node)
+            {
+                node_parent->left = current;
+            }
+            else if (node_parent->right == node)
+            {
+                node_parent->right = current;
+            }
         }
 
         if (node->left && node->left != current)
@@ -316,6 +315,11 @@ void avl_remove(avl_root_t *root, avl_node_t *node)
         if (current)
         {
             current->parent = node->parent;
+            rebalance = current;
+        }
+        else
+        {
+            rebalance = node;
         }
 
         if (node_parent->left == node)
@@ -326,15 +330,15 @@ void avl_remove(avl_root_t *root, avl_node_t *node)
         {
             node_parent->right = current;
         }
-        balance = node_parent;
     }
 
     do
     {
-        avl_adjust_height(balance);
-        balance = avl_balance(balance);
-        balance = balance->parent;
-    } while (balance->parent);
-    root->node = balance;
+        rebalance = rebalance->parent;
+        avl_adjust_height(rebalance);
+        rebalance = avl_balance(rebalance);
+    } while (rebalance->parent);
+
+    root->node = rebalance;
     return;
 }
