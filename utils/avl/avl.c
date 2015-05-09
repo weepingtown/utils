@@ -49,9 +49,70 @@ avl_node_t *_avl_first(avl_node_t *root)
 
 void *avl_first(avl_root_t *root)
 {
-    avl_node_t *node = _avl_first(root);
+    avl_node_t *node = _avl_first(root->node);
 
     return node ? (void *)((char *)node - root->node_offsite) : AVL_NULL;
+}
+
+avl_node_t *_avl_last(avl_node_t *root)
+{
+    avl_node_t *node = root;
+    while (node->right)
+        node = node->right;
+    return node;
+}
+
+void *avl_last(avl_root_t *root)
+{
+    avl_node_t *node = _avl_last(root->node);
+
+    return node ? (void *)((char *)node - root->node_offsite) : AVL_NULL;
+}
+
+avl_node_t *_avl_prev(avl_node_t *node)
+{
+    avl_node_t *current = node;
+    avl_node_t *parent = node->parent;
+    if (current->left == AVL_NULL && current->right == AVL_NULL)
+    {
+        while (parent)
+        {
+            if (parent->right == current)
+            {
+                return (void *)parent;
+            }
+            current = parent;
+            parent = current->parent;
+        }
+    }
+    else if (current->left == AVL_NULL)
+    {
+        if (parent)
+        {
+            return (void *)parent;
+        }
+    }
+    else
+    {
+        parent = current;
+        current = current->left;
+        while (current)
+        {
+            if (current->right == AVL_NULL)
+            {
+                return (void *)current;
+            }
+            parent = current;
+            current = current->right;
+        }
+    }
+    return AVL_NULL;
+}
+
+void *avl_prev(avl_root_t *root, avl_node_t *node)
+{
+    avl_node_t *current = _avl_prev(node);
+    return current ? (void *)((char *)current - root->node_offsite) : AVL_NULL;
 }
 
 avl_node_t *_avl_next(avl_node_t *node)

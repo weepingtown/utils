@@ -31,7 +31,9 @@ extern avl_node_t *avl_insert(avl_root_t *root, avl_node_t *node);
 extern void avl_remove(avl_root_t *root, avl_node_t *node);
 extern void *avl_find(avl_root_t *root, void *key);
 extern void *avl_first(avl_root_t *root);
+extern void *avl_last(avl_root_t *root);
 extern void *avl_next(avl_root_t *root, avl_node_t *node);
+extern void *avl_prev(avl_root_t *root, avl_node_t *node);
 extern void *avl_find_or_next(avl_root_t *root, void *key);
 
 #ifdef __cplusplus
