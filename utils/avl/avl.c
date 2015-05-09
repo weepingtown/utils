@@ -12,46 +12,46 @@ void *avl_get_key(avl_root_t *root, avl_node_t *node)
     return (void *)((char *)node - root->node_offsite + root->key_offsite);
 }
 
-avl_node_t *_avl_find(avl_root_t *root, avl_node_t *node, void *key)
+avl_node_t *_avl_find(avl_root_t *root, void *key)
 {
+    avl_node_t *node = root->node;
     void *node_key = AVL_NULL;
     int cmp = 0;
-    if (node == AVL_NULL) return AVL_NULL;
-    node_key = avl_get_key(root, node);
-    cmp = root->compare(key, node_key);
-    if (cmp == -1)
-        return _avl_find(root, node->left, key);
-    else if (cmp == 1)
-        return _avl_find(root, node->right, key);
-    else
-        return node;
+    while (node)
+    {
+        node_key = avl_get_key(root, node);
+        cmp = root->compare(key, node_key);
+        if (cmp == -1)
+            node = node->left;
+        else if (cmp == 1)
+            node = node->right;
+        else
+            break;
+    }
+
+    return node;
 }
 
 void *avl_find(avl_root_t *root, void *key)
 {
-    avl_node_t *node = AVL_NULL;
-    if (root == AVL_NULL)
-        return AVL_NULL;
-    node = _avl_find(root, root->node, key);
-    if (node == AVL_NULL)
-        return AVL_NULL;
+    avl_node_t *node = _avl_find(root, key);
 
-    return (void *)((char *)node - root->node_offsite);
+    return node ? (void *)((char *)node - root->node_offsite) : AVL_NULL;
 }
 
 avl_node_t *_avl_first(avl_node_t *root)
 {
-    avl_node_t *current = root;
-    while (current->left)
-        current = current->left;
-    return current;
+    avl_node_t *node = root;
+    while (node->left)
+        node = node->left;
+    return node;
 }
 
 void *avl_first(avl_root_t *root)
 {
-    avl_node_t *current = _avl_first(root);
+    avl_node_t *node = _avl_first(root);
 
-    return current ? (void *)((char *)current - root->node_offsite) : AVL_NULL;
+    return node ? (void *)((char *)node - root->node_offsite) : AVL_NULL;
 }
 
 avl_node_t *_avl_next(avl_node_t *node)
@@ -93,6 +93,7 @@ avl_node_t *_avl_next(avl_node_t *node)
     }
     return AVL_NULL;
 }
+
 void *avl_next(avl_root_t *root, avl_node_t *node)
 {
     avl_node_t *current = _avl_next(node);
@@ -117,6 +118,7 @@ void *avl_find_or_next(avl_root_t *root, void *key)
     }
     return (void *)((char *)node - root->node_offsite);
 }
+
 int avl_height(avl_node_t *root)
 {
     return root ? root->height : 0;
@@ -179,6 +181,7 @@ avl_root_t *avl_init_tree(avl_root_t *root, int key_offsite, int node_offsite, a
 
     return root;
 }
+
 
 void avl_init_node(avl_node_t *node)
 {
