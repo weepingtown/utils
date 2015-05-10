@@ -5,9 +5,6 @@
 extern "C" {
 #endif
 
-
-#define DLL_NULL 0
-
 typedef struct dll_node_s
 {
     struct dll_node_s *prev;
@@ -18,9 +15,8 @@ typedef struct dll_node_s
 
 typedef struct dll_s
 {
-    struct dll_node_s *first;
-    int node_offsite;
-    int key_offsite;
+    struct dll_node_s *head;
+    struct dll_node_s *tail;
 } dll_t;
 
 
