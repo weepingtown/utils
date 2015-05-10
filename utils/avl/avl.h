@@ -5,8 +5,6 @@
 extern "C" {
 #endif
 
-#define AVL_NULL 0
-
 typedef struct avl_node_s
 {
     struct avl_node_s *left;
@@ -26,7 +24,7 @@ typedef struct avl_root_s
 } avl_root_t;
 
 extern void avl_init_node(avl_node_t *node);
-extern avl_root_t *avl_init_tree(avl_root_t *root, int key_offsite, int node_offsite, avl_compare compare);
+extern void avl_init_tree(avl_root_t *root, int key_offsite, int node_offsite, avl_compare compare);
 extern avl_node_t *avl_insert(avl_root_t *root, avl_node_t *node);
 extern void avl_remove(avl_root_t *root, avl_node_t *node);
 extern void *avl_find(avl_root_t *root, void *key);

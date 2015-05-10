@@ -1,6 +1,7 @@
 
 #include "avl.h"
 
+#define AVL_NULL 0
 
 int avl_max(int a, int b)
 {
@@ -164,7 +165,6 @@ void *avl_next(avl_root_t *root, avl_node_t *node)
 void *avl_find_or_next(avl_root_t *root, void *key)
 {
     avl_node_t *node = AVL_NULL;
-    avl_node_t *prev = AVL_NULL;
     void *node_key = AVL_NULL;
     int cmp = 0;
 
@@ -233,14 +233,14 @@ avl_node_t *avl_rotate_left(avl_node_t *root)
 }
 
 
-avl_root_t *avl_init_tree(avl_root_t *root, int key_offsite, int node_offsite, avl_compare compare)
+void avl_init_tree(avl_root_t *root, int key_offsite, int node_offsite, avl_compare compare)
 {
     root->node = AVL_NULL;
     root->compare = compare;
     root->key_offsite = key_offsite;
     root->node_offsite = node_offsite;
 
-    return root;
+    return;
 }
 
 
