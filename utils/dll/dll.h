@@ -17,6 +17,7 @@ typedef struct dll_s
 {
     struct dll_node_s *head;
     struct dll_node_s *tail;
+    int count;
 } dll_t;
 
 

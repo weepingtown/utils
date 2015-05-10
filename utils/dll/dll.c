@@ -6,6 +6,7 @@ void dll_init(dll_t *dll)
 {
     dll->head = DLL_NULL;
     dll->tail = DLL_NULL;
+    dll->count = 0;
     return;
 }
 
@@ -22,12 +23,14 @@ void dll_add_tail(dll_t *dll, dll_node_t *node)
     {
         dll->head = node;
         dll->tail = node;
+        dll->count++;
         return;
     }
 
     dll->tail->next = node;
     node->prev = dll->tail;
     dll->tail = node;
+    dll->count++;
     return;
 }
 
@@ -37,12 +40,14 @@ void dll_add_head(dll_t *dll, dll_node_t *node)
     {
         dll->head = node;
         dll->tail = node;
+        dll->count++;
         return;
     }
 
     dll->head->prev = node;
     node->next = dll->head;
     dll->head = node;
+    dll->count++;
     return;
 }
 
@@ -53,6 +58,7 @@ void dll_remove(dll_t *dll, dll_node_t *node)
         dll->head->prev = node;
         node->next = dll->head;
         dll->head = node;
+        dll->count--;
         return;
     }
 
@@ -65,7 +71,7 @@ void dll_remove(dll_t *dll, dll_node_t *node)
     {
         dll->tail = node->prev;
     }
-
+    dll->count--;
     return;
 }
 
@@ -89,3 +95,7 @@ dll_node_t *dll_get_prev(dll_node_t *node)
     return node->prev;
 }
 
+int dll_get_count(dll_t *dll)
+{
+    return dll->count;
+}
