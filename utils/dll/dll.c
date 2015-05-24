@@ -58,9 +58,8 @@ void dll_delete(dll_t *dll, dll_node_t *node)
 {
     if ((dll->head != node) && (dll->tail != node))
     {
-        dll->head->prev = node;
-        node->next = dll->head;
-        dll->head = node;
+        node->prev->next = node->next;
+        node->next->prev = node->prev;
         dll->count--;
         return;
     }
@@ -68,13 +67,16 @@ void dll_delete(dll_t *dll, dll_node_t *node)
     if (dll->head == node)
     {
         dll->head = node->next;
+        dll->head->prev = DLL_NULL;
     }
 
     if (dll->tail == node)
     {
         dll->tail = node->prev;
+        dll->tail->next = DLL_NULL;
     }
     dll->count--;
+    dll_node_init(node);
     return;
 }
 
