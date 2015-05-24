@@ -167,7 +167,7 @@ void dll_remove(dll_t *dll, void *node_key)
     while (current)
     {
         current_key = dll_get_key(dll, current);
-        cmp = dll->compare(current, node_key);
+        cmp = dll->compare(current_key, node_key);
         if (cmp == 0)
         {
             dll_delete(dll, current);
@@ -188,7 +188,7 @@ dll_node_t *dll_find(dll_t *dll, void *node_key)
     while (current)
     {
         current_key = dll_get_key(dll, current);
-        cmp = dll->compare(current, node_key);
+        cmp = dll->compare(current_key, node_key);
         if (cmp == 0)
         {
             break;
@@ -207,7 +207,7 @@ dll_node_t *dll_find_or_next(dll_t *dll, void *node_key)
     while (current)
     {
         current_key = dll_get_key(dll, current);
-        cmp = dll->compare(current, node_key);
+        cmp = dll->compare(current_key, node_key);
         if (cmp > -1)
         {
             break;
