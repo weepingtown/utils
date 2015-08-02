@@ -9,12 +9,12 @@ namespace test
 	{
 	public:
 		
-		TEST_METHOD(TestMethod1)
+		TEST_METHOD(InitAvl)
 		{
-			// TODO: 在此输入测试代码
+			
             avl_node_t node;
             avl_init_node(&node);
-            printf("aaa");
+            
 		}
 
 	};
