@@ -329,6 +329,10 @@ avl_node_t *avl_insert(avl_root_t *root, avl_node_t *node)
                 current = current->right;
             }
         }
+        else
+        {
+            return AVL_NULL;
+        }
 
         current_key = avl_get_key(root, current);
         cmp = root->compare(current_key, node_key);
